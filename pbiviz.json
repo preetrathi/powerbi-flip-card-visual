@@ -1,0 +1,27 @@
+{
+    "visual": {
+      "name": "flipCardVisual",
+      "displayName": "Flip Card Visual",
+      "guid": "flipCardVisual123456789",
+      "visualClassName": "Visual",
+      "version": "1.0.0.0",
+      "description": "A professional, custom-designed Power BI visual built by Preet Kumar — Data Scientist with 3+ years of experience in building advanced dashboards, automation solutions, and custom visuals.",
+      "supportUrl": "https://www.linkedin.com/in/preet-kumar-maheshwari/",
+      "gitHubUrl": "https://github.com/preetkumar/flip-card-visual"
+    },
+    "author": {
+      "name": "Preet Kumar",
+      "email": "preetkumarmaheshwari@gmail.com"
+    },
+    "assets": {
+      "icon": "assets/icon.png",
+      "thumbnail": "assets/icon.png",
+      "screenshots": []
+    },
+    "apiVersion": "5.3.0",
+    "style": "style/visual.less",
+    "capabilities": "capabilities.json",
+    "dependencies": null,
+    "stringResources": []
+  }
+  
