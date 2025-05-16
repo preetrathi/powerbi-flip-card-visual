@@ -1,0 +1,84 @@
+Category_Bar_Chart = 
+VAR TotalAmount =
+    CALCULATE(SUM(DEMO_BILL_PAYMENTS[TRXN_AMT]))
+
+-- Get the selected color gradient
+VAR SelectedColor = 
+    SELECTEDVALUE('ColorTable'[ColorCode], "#4682B4,#6A5ACD")  -- Default color: Blue to Purple
+
+-- Get the selected bar height
+VAR SelectedSize = 
+    SELECTEDVALUE('SizeTable'[BarHeight], 60)  -- Default height: 60px
+
+-- Summarize the data for each category
+VAR CategoryData =
+    SUMMARIZE(
+        DEMO_BILL_PAYMENTS, 
+        DEMO_BILL_PAYMENTS[COMPANYNAME],
+        "Category_Amount", CALCULATE(SUM(DEMO_BILL_PAYMENTS[TRXN_AMT])),
+        "Percentage", 
+            DIVIDE(
+                CALCULATE(SUM(DEMO_BILL_PAYMENTS[TRXN_AMT])),
+                TotalAmount
+            )
+    )
+
+-- Construct the HTML with dynamic values for each category
+VAR BarHTML = 
+    CONCATENATEX(
+        CategoryData, 
+        VAR _category = [COMPANYNAME]
+        VAR _amount = [Category_Amount]
+        VAR _percentage = [Percentage]
+        VAR _color1 = LEFT(SelectedColor, FIND(",", SelectedColor) - 1)   -- First color
+        VAR _color2 = MID(SelectedColor, FIND(",", SelectedColor) + 1, LEN(SelectedColor))  -- Second color
+        RETURN
+            "<style>
+                .animated-bar {
+                    width: 0%; 
+                    height: " & SelectedSize & "px;
+                    background: linear-gradient(to right, " & _color1 & ", " & _color2 & ");
+                    border-radius: 20px;  
+                    transition: width 2s ease-out;
+                }
+                .progress-container {
+                    width: 100%;
+                    height: auto;
+                    margin: 5px 0;
+                    position: relative;
+                    box-sizing: border-box;
+                }
+                .progress-text {
+                    position: absolute;
+                    left: 20px;
+                    top: 15px;
+                    font-size: 16px;
+                    color: white;
+                    font-weight: bold;
+                }
+                .amount-text {
+                    position: absolute;
+                    right: 20px;
+                    top: 10px;
+                    font-size: 18px;
+                    color: " & _color1 & ";
+                    font-weight: bold;
+                }
+                .percentage-text {
+                    position: absolute;
+                    right: 20px;
+                    top: 35px;
+                    font-size: 14px;
+                    color: " & _color1 & ";
+                }
+            </style>" &
+            "<div class='progress-container'>" &
+            "<div class='animated-bar' style='width: " & FORMAT(_percentage * 100, "0.0") & "%;'></div>" &
+            "<div class='progress-text'>" & _category & "</div>" &
+            "<div class='amount-text'>" & FORMAT(_amount, "#,0") & "</div>" &
+            "<div class='percentage-text'>" & FORMAT(_percentage * 100, "0.0") & "%</div>" &
+            "</div>",
+        UNICHAR(10)
+    )
+
+RETURN BarHTML
